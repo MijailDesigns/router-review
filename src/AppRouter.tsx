@@ -3,13 +3,16 @@ import AuthLayout from "./auth/layout/AuthLayout";
 import { LoginPage } from "./auth/pages/LoginPage";
 import { RegisterPage } from "./auth/pages/RegisterPage";
 
-import ChatPage from "./chat/pages/ChatPage";
 import { lazy, Suspense } from "react";
 import { sleep } from "./lib/sleep";
 
 const ChatLayout = lazy(async () => {
   await sleep(1500);
   return import("./chat/layout/ChatLayout");
+});
+
+const ChatPage = lazy(async () => {
+  return import("./chat/pages/ChatPage");
 });
 
 export const AppRouter = () => {
