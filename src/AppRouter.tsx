@@ -6,6 +6,8 @@ import { RegisterPage } from "./auth/pages/RegisterPage";
 import { lazy, Suspense } from "react";
 import { sleep } from "./lib/sleep";
 import PrivateRoute from "./auth/components/PrivateRoute";
+import { checkAuth } from "./fake/fake-data";
+import { useQuery } from "@tanstack/react-query";
 
 const ChatLayout = lazy(async () => {
   await sleep(1500);
@@ -21,6 +23,31 @@ const NoChatSelectedPage = lazy(async () => {
 });
 
 export const AppRouter = () => {
+  const {
+    data: user,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      return checkAuth(token);
+    },
+    retry: 0,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="spinner-border animate-spin rounded-full border-4 border-gray-200 border-t-4 border-t-purple-600 h-12 w-12"></div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -39,7 +66,7 @@ export const AppRouter = () => {
                 </div>
               }
             >
-              <PrivateRoute isAuthenticated={false}>
+              <PrivateRoute isAuthenticated={!!user}>
                 <ChatLayout />
               </PrivateRoute>
             </Suspense>
