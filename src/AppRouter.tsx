@@ -5,6 +5,7 @@ import { RegisterPage } from "./auth/pages/RegisterPage";
 
 import { lazy, Suspense } from "react";
 import { sleep } from "./lib/sleep";
+import PrivateRoute from "./auth/components/PrivateRoute";
 
 const ChatLayout = lazy(async () => {
   await sleep(1500);
@@ -38,7 +39,9 @@ export const AppRouter = () => {
                 </div>
               }
             >
-              <ChatLayout />
+              <PrivateRoute isAuthenticated={false}>
+                <ChatLayout />
+              </PrivateRoute>
             </Suspense>
           }
         >
