@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getClients } from "@/fake/fake-data";
 import { useQuery } from "@tanstack/react-query";
-import { NavLink } from "react-router";
+import { NavLink, useParams } from "react-router";
 
 const ContactList = () => {
   const { data: clients, isLoading } = useQuery({
@@ -10,6 +10,8 @@ const ContactList = () => {
     queryFn: () => getClients(),
     staleTime: 60 * 1000 * 5, // 5 minutes
   });
+
+  const { clientId } = useParams();
 
   return (
     <ScrollArea className="h-[calc(100vh-64px)]">
@@ -23,6 +25,7 @@ const ContactList = () => {
 
             {clients?.map((client) => (
               <NavLink
+                key={client.id}
                 to={`/chat/${client.id}`}
                 className={({ isActive }) =>
                   `w-full flex items-center mt-3 transition-all duration-300 ${
@@ -32,10 +35,25 @@ const ContactList = () => {
                   }`
                 }
               >
-                <div className="h-6 w-6 rounded-full bg-green-300 mr-2 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                <div
+                  className={`h-6 w-6 rounded-full mr-2 flex-shrink-0 flex items-center justify-center text-xs ${
+                    clientId === client.id
+                      ? "bg-blue-300 text-blue-600 font-medium"
+                      : "bg-gray-300"
+                  }`}
+                >
                   {client.name.charAt(0)}
+                  {client.name.charAt(1)}
                 </div>
-                <span className="text-gray-600">{client.name}</span>
+                <span
+                  className={`transition-all duration-300 ${
+                    clientId === client.id
+                      ? "text-blue-600 font-medium"
+                      : "text-gray-600"
+                  }`}
+                >
+                  {client.name}
+                </span>
               </NavLink>
             ))}
           </div>
