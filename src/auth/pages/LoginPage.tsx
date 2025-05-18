@@ -5,10 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import placeHolderImage from "../../assets/placeholder.svg";
 import { Link, useNavigate } from "react-router";
-import { useMutation } from "@tanstack/react-query";
-import { l } from "node_modules/react-router/dist/development/lib-CCSAGgcP.d.mts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { loginUser } from "@/fake/fake-data";
-import { c } from "node_modules/vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 import { Loader2 } from "lucide-react";
 
 export function LoginPage({
@@ -16,13 +14,16 @@ export function LoginPage({
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
       console.log(data);
       localStorage.setItem("token", data.token);
-      // TODO: invalidar el query del usuario
+
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+
       navigate("/chat", { replace: true });
     },
   });
